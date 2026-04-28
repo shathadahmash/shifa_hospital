@@ -1,68 +1,304 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <title>Medical Reports | Shifa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Reports | Shifa Hospital</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config = { darkMode: "class" }</script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body class="min-h-screen bg-[#070b14] text-slate-100">
-<main class="p-6 lg:p-10">
+<body class="bg-white text-slate-900">
 
-    <div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div>
-            <p class="text-sm text-emerald-300 font-medium">Clinical Records</p>
-            <h1 class="mt-2 text-4xl lg:text-5xl font-semibold">Medical Reports</h1>
-            <p class="mt-3 text-slate-400">Review diagnosis, prescriptions, treatments and doctor notes.</p>
-        </div>
+<header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <a href="/" class="text-2xl font-semibold tracking-tight">Shifa Hospital</a>
 
-        <div class="flex gap-3">
-            <a href="/dashboard/" class="rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-3 font-semibold">Dashboard</a>
-            <a href="/admin/core/medicalreport/add/" class="rounded-2xl bg-emerald-400 text-slate-950 px-5 py-3 font-semibold">New Report</a>
+        <nav class="hidden lg:flex items-center gap-8 text-sm font-medium text-slate-600">
+            <a href="/dashboard/" class="hover:text-slate-950">Dashboard</a>
+            <a href="/patients/" class="hover:text-slate-950">Patients</a>
+            <a href="/appointments/" class="hover:text-slate-950">Appointments</a>
+            <a href="/reports/" class="text-slate-950">Reports</a>
+            <a href="/invoices/" class="hover:text-slate-950">Invoices</a>
+        </nav>
+
+        <a href="/dashboard/"
+           class="rounded-full bg-slate-950 text-white px-5 py-2.5 text-sm font-medium hover:bg-slate-800 transition">
+            Dashboard
+        </a>
+    </div>
+</header>
+
+<section class="relative pt-28 pb-28 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-cyan-50 via-white to-blue-100"></div>
+    <div class="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-cyan-200 blur-3xl opacity-60"></div>
+    <div class="absolute top-36 -left-40 h-96 w-96 rounded-full bg-blue-200 blur-3xl opacity-60"></div>
+
+    <div class="relative max-w-7xl mx-auto px-6">
+        <p class="inline-flex rounded-full bg-white border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 shadow-sm">
+            Clinical Records
+        </p>
+
+        <div class="mt-6 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+                <h1 class="text-4xl lg:text-6xl font-semibold tracking-tight leading-tight">
+                    Medical Reports
+                </h1>
+                <p class="mt-4 text-base lg:text-lg text-slate-600 leading-8 max-w-2xl">
+                    Review diagnosis, prescriptions, treatments, doctor notes, and clinical activity insights.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-xl border border-slate-200 p-6 w-full lg:w-72">
+                <p class="text-sm text-slate-500">Total Reports</p>
+                <p class="text-4xl font-semibold mt-2">{{ reports|length }}</p>
+                <div class="mt-5 h-2 rounded-full bg-slate-100 overflow-hidden">
+                    <div class="h-full w-4/5 bg-cyan-500 rounded-full"></div>
+                </div>
+            </div>
         </div>
     </div>
+</section>
 
-    <section class="grid gap-5">
+<main class="max-w-7xl mx-auto px-6 pb-20 -mt-12 relative z-10 space-y-8">
+
+    <section class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-lg">
+            <p class="text-sm text-slate-500">Reports</p>
+            <p class="mt-2 text-4xl font-semibold">{{ reports|length }}</p>
+            <p class="mt-2 text-sm text-cyan-600">Clinical records stored</p>
+        </div>
+
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-lg">
+            <p class="text-sm text-slate-500">Prescriptions</p>
+            <p class="mt-2 text-4xl font-semibold" id="prescriptionCount">0</p>
+            <p class="mt-2 text-sm text-cyan-600">Reports with medication</p>
+        </div>
+
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-lg">
+            <p class="text-sm text-slate-500">Treatments</p>
+            <p class="mt-2 text-4xl font-semibold" id="treatmentCount">0</p>
+            <p class="mt-2 text-sm text-cyan-600">Reports with treatment plan</p>
+        </div>
+    </section>
+
+    <section class="grid gap-6 lg:grid-cols-2">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-lg">
+            <div class="mb-4">
+                <p class="text-sm text-cyan-600 font-medium">Analytics</p>
+                <h2 class="mt-1 text-2xl font-semibold tracking-tight">Report Breakdown</h2>
+            </div>
+            <div class="h-72">
+                <canvas id="reportBreakdownChart"></canvas>
+            </div>
+        </div>
+
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-lg">
+            <div class="mb-4">
+                <p class="text-sm text-cyan-600 font-medium">Clinical Activity</p>
+                <h2 class="mt-1 text-2xl font-semibold tracking-tight">Monthly Reports</h2>
+            </div>
+            <div class="h-72">
+                <canvas id="monthlyReportsChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="grid gap-4 md:grid-cols-3">
+            <input id="searchInput"
+                   type="text"
+                   placeholder="Search patient, doctor, diagnosis..."
+                   class="rounded-full border border-slate-200 px-5 py-3 text-sm outline-none focus:border-cyan-500">
+
+            <select id="filterType"
+                    class="rounded-full border border-slate-200 px-5 py-3 text-sm outline-none focus:border-cyan-500">
+                <option value="all">All Reports</option>
+                <option value="prescription">Has Prescription</option>
+                <option value="treatment">Has Treatment</option>
+                <option value="notes">Has Notes</option>
+            </select>
+
+            <button onclick="clearFilters()"
+                    class="rounded-full bg-slate-950 text-white px-5 py-3 text-sm font-medium hover:bg-slate-800">
+                Clear Filters
+            </button>
+        </div>
+    </section>
+
+    <section class="grid gap-5" id="reportsGrid">
         {% for report in reports %}
-        <article class="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 hover:bg-white/[0.06]">
-            <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <article
+            class="report-card rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-lg transition"
+            data-search="{{ report.patient.full_name }} {{ report.doctor.full_name }} {{ report.diagnosis }} {{ report.prescription }} {{ report.treatment }} {{ report.notes }}"
+            data-prescription="{% if report.prescription %}yes{% else %}no{% endif %}"
+            data-treatment="{% if report.treatment %}yes{% else %}no{% endif %}"
+            data-notes="{% if report.notes %}yes{% else %}no{% endif %}"
+            data-month="{{ report.created_at|date:'M' }}"
+        >
+            <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div>
-                    <h2 class="text-2xl font-semibold">{{ report.patient.full_name }}</h2>
-                    <p class="mt-2 text-slate-400">
-                        Doctor: {{ report.doctor.full_name }} · {{ report.created_at|date:"M d, Y" }}
+                    <p class="text-sm font-medium text-cyan-600">Report #{{ report.id }}</p>
+                    <h2 class="mt-1 text-2xl font-semibold tracking-tight">
+                        {{ report.patient.full_name }}
+                    </h2>
+                    <p class="mt-1 text-sm text-slate-500">
+                        Dr. {{ report.doctor.full_name }} · {{ report.created_at|date:"M d, Y" }}
                     </p>
                 </div>
 
-                <a href="/admin/core/medicalreport/{{ report.id }}/change/" class="text-emerald-300 font-semibold hover:underline">
-                    Edit Report
-                </a>
+                <span class="w-fit rounded-full bg-cyan-50 border border-cyan-100 px-3 py-1 text-xs font-semibold text-cyan-700">
+                    Clinical Report
+                </span>
             </div>
 
-            <div class="mt-6 grid gap-4 lg:grid-cols-3">
-                <div class="rounded-2xl bg-black/20 border border-white/10 p-5">
-                    <p class="text-sm text-slate-400">Diagnosis</p>
-                    <p class="mt-2 text-slate-200">{{ report.diagnosis }}</p>
+            <div class="mt-5 grid gap-4 lg:grid-cols-3">
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Diagnosis</p>
+                    <p class="mt-2 text-sm text-slate-700 leading-6">{{ report.diagnosis }}</p>
                 </div>
 
-                <div class="rounded-2xl bg-black/20 border border-white/10 p-5">
-                    <p class="text-sm text-slate-400">Prescription</p>
-                    <p class="mt-2 text-slate-200">{{ report.prescription|default:"No prescription added." }}</p>
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Prescription</p>
+                    <p class="mt-2 text-sm text-slate-700 leading-6">
+                        {{ report.prescription|default:"No prescription added." }}
+                    </p>
                 </div>
 
-                <div class="rounded-2xl bg-black/20 border border-white/10 p-5">
-                    <p class="text-sm text-slate-400">Treatment</p>
-                    <p class="mt-2 text-slate-200">{{ report.treatment|default:"No treatment added." }}</p>
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Treatment</p>
+                    <p class="mt-2 text-sm text-slate-700 leading-6">
+                        {{ report.treatment|default:"No treatment added." }}
+                    </p>
                 </div>
             </div>
+
+            {% if report.notes %}
+            <div class="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Doctor Notes</p>
+                <p class="mt-2 text-sm text-slate-700 leading-6">{{ report.notes }}</p>
+            </div>
+            {% endif %}
         </article>
+
         {% empty %}
-        <div class="rounded-[2rem] border border-white/10 bg-white/[0.04] px-6 py-12 text-center text-slate-500">
+        <div class="rounded-3xl border border-slate-200 bg-white px-6 py-12 text-center text-slate-400 shadow-sm">
             No medical reports found.
         </div>
         {% endfor %}
     </section>
 
 </main>
+
+<footer class="bg-slate-950 text-slate-400 py-8">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between gap-4">
+        <p>Shifa Hospital Medical Reports</p>
+        <p>Clinical insights and records</p>
+    </div>
+</footer>
+
+<script>
+const cards = Array.from(document.querySelectorAll(".report-card"));
+const searchInput = document.getElementById("searchInput");
+const filterType = document.getElementById("filterType");
+
+function applyFilters() {
+    const searchValue = searchInput.value.toLowerCase();
+    const filterValue = filterType.value;
+
+    cards.forEach(card => {
+        const text = card.dataset.search.toLowerCase();
+        let visible = text.includes(searchValue);
+
+        if (filterValue === "prescription") {
+            visible = visible && card.dataset.prescription === "yes";
+        }
+
+        if (filterValue === "treatment") {
+            visible = visible && card.dataset.treatment === "yes";
+        }
+
+        if (filterValue === "notes") {
+            visible = visible && card.dataset.notes === "yes";
+        }
+
+        card.style.display = visible ? "block" : "none";
+    });
+}
+
+function clearFilters() {
+    searchInput.value = "";
+    filterType.value = "all";
+    applyFilters();
+}
+
+searchInput.addEventListener("input", applyFilters);
+filterType.addEventListener("change", applyFilters);
+
+const totalReports = cards.length;
+const withPrescription = cards.filter(card => card.dataset.prescription === "yes").length;
+const withTreatment = cards.filter(card => card.dataset.treatment === "yes").length;
+const withNotes = cards.filter(card => card.dataset.notes === "yes").length;
+
+document.getElementById("prescriptionCount").textContent = withPrescription;
+document.getElementById("treatmentCount").textContent = withTreatment;
+
+new Chart(document.getElementById("reportBreakdownChart"), {
+    type: "doughnut",
+    data: {
+        labels: ["Diagnosis", "Prescription", "Treatment", "Notes"],
+        datasets: [{
+            data: [totalReports, withPrescription, withTreatment, withNotes],
+            backgroundColor: ["#06b6d4", "#0f172a", "#38bdf8", "#94a3b8"],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: "bottom"
+            }
+        }
+    }
+});
+
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const monthlyCounts = months.map(month => {
+    return cards.filter(card => card.dataset.month === month).length;
+});
+
+new Chart(document.getElementById("monthlyReportsChart"), {
+    type: "bar",
+    data: {
+        labels: months,
+        datasets: [{
+            label: "Reports",
+            data: monthlyCounts,
+            backgroundColor: "#06b6d4",
+            borderRadius: 12
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    precision: 0
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
+});
+</script>
+
 </body>
 </html>
