@@ -1,76 +1,97 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <title>Invoices | Shifa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoices | Shifa Hospital</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config = { darkMode: "class" }</script>
+
+    <style>
+        .input {
+            width: 100%;
+            border-radius: 1rem;
+            border: 1px solid rgb(226 232 240);
+            background: white;
+            padding: 0.85rem 1rem;
+            outline: none;
+        }
+
+        .input:focus {
+            border-color: rgb(6 182 212);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
+        }
+    </style>
 </head>
 
-<body class="min-h-screen bg-slate-50 text-slate-950 dark:bg-[#070b14] dark:text-slate-100">
+<body class="bg-white text-slate-900">
 
-<main class="p-6 lg:p-10">
+<header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <a href="/" class="text-2xl font-semibold tracking-tight">Shifa Hospital</a>
 
-    <!-- Header -->
-    <div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div>
-            <p class="text-sm text-cyan-600 dark:text-cyan-300 font-medium">Billing Center</p>
-            <h1 class="mt-2 text-4xl lg:text-5xl font-semibold">Invoices</h1>
-            <p class="mt-3 text-slate-500 dark:text-slate-400">
-                Manage patient invoices, payment status and billing records.
-            </p>
-        </div>
+        <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+            <a href="/dashboard/" class="hover:text-slate-950">Dashboard</a>
+            <a href="/patients/" class="hover:text-slate-950">Patients</a>
+            <a href="/appointments/" class="hover:text-slate-950">Appointments</a>
+            <a href="{% url 'invoices_list' %}" class="text-slate-950">Invoices</a>
+        </nav>
 
-        <div class="flex flex-wrap gap-3">
-            <button id="themeToggle"
-                class="rounded-2xl border border-slate-200 bg-white px-5 py-3 font-semibold dark:border-white/10 dark:bg-white/[0.04]">
-                Dark Mode
-            </button>
-
-            <a href="/dashboard/"
-               class="rounded-2xl border border-slate-200 bg-white px-5 py-3 font-semibold dark:border-white/10 dark:bg-white/[0.04]">
-               Dashboard
-            </a>
-
-            <a href="/admin/core/invoice/add/"
-               class="rounded-2xl bg-cyan-400 text-slate-950 px-5 py-3 font-semibold">
-               Create Invoice
-            </a>
-        </div>
+        <button type="button" onclick="openCreateModal()"
+            class="rounded-full bg-slate-950 text-white px-5 py-2.5 text-sm font-medium hover:bg-slate-800 transition">
+            Create Invoice
+        </button>
     </div>
+</header>
 
-    <!-- Hero -->
-    <section class="mb-8 overflow-hidden rounded-[2rem] border border-slate-200 bg-gradient-to-br from-cyan-100 via-white to-blue-100 p-8 dark:border-white/10 dark:from-cyan-400/20 dark:via-white/[0.04] dark:to-blue-500/20">
-        <div class="grid gap-8 lg:grid-cols-3 lg:items-end">
-            <div class="lg:col-span-2">
-                <p class="text-slate-600 dark:text-slate-300">Finance overview</p>
-                <h2 class="mt-3 text-3xl lg:text-5xl font-semibold tracking-tight">
-                    Keep billing organized.
-                </h2>
-                <p class="mt-4 text-slate-500 dark:text-slate-400 max-w-2xl">
-                    Track invoice payments, pending balances and patient billing history from one page.
+<section class="relative pt-32 pb-16 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-cyan-50 via-white to-blue-100"></div>
+    <div class="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-cyan-200 blur-3xl opacity-60"></div>
+    <div class="absolute top-40 -left-32 h-96 w-96 rounded-full bg-blue-200 blur-3xl opacity-60"></div>
+
+    <div class="relative max-w-7xl mx-auto px-6">
+        <p class="inline-flex rounded-full bg-white border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 shadow-sm">
+            Billing Center
+        </p>
+
+        <div class="mt-7 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+                <h1 class="text-5xl lg:text-7xl font-semibold tracking-tight leading-tight">
+                    Invoices
+                </h1>
+                <p class="mt-6 text-lg text-slate-600 leading-8 max-w-2xl">
+                    Create, update, and delete patient billing records
                 </p>
             </div>
 
-            <div class="rounded-3xl border border-slate-200 bg-white/70 p-5 dark:border-white/10 dark:bg-black/20">
-                <p class="text-sm text-slate-500 dark:text-slate-400">System status</p>
-                <p class="mt-2 text-2xl font-semibold text-cyan-600 dark:text-cyan-300">Operational</p>
-                <div class="mt-5 h-2 rounded-full bg-slate-200 dark:bg-white/10">
-                    <div class="h-2 w-4/5 rounded-full bg-cyan-400"></div>
+            <div class="bg-white rounded-3xl shadow-xl border border-slate-200 p-5 w-full lg:w-72">
+                <p class="text-sm text-slate-500">Total Invoices</p>
+                <p class="text-4xl font-semibold mt-2">{{ invoices|length }}</p>
+                <div class="mt-4 h-2 rounded-full bg-slate-100 overflow-hidden">
+                    <div class="h-full w-4/5 bg-cyan-500 rounded-full"></div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Table -->
-    <section class="overflow-hidden rounded-[2rem] border border-slate-200 bg-white dark:border-white/10 dark:bg-white/[0.04]">
-        <div class="border-b border-slate-200 p-6 dark:border-white/10">
-            <h2 class="text-2xl font-semibold">Billing Records</h2>
+<main class="max-w-7xl mx-auto px-6 pb-24">
+
+    <section class="rounded-[2rem] bg-white border border-slate-200 shadow-xl overflow-hidden">
+        <div class="p-6 lg:p-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200">
+            <div>
+                <p class="text-cyan-600 font-medium">Hospital Finance</p>
+                <h2 class="mt-2 text-3xl font-semibold tracking-tight">Billing Records</h2>
+            </div>
+
+            <button type="button" onclick="openCreateModal()"
+                class="rounded-full bg-slate-950 text-white px-6 py-3 font-medium hover:bg-slate-800">
+                Create Invoice
+            </button>
         </div>
 
         <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
-                <thead class="bg-slate-50 text-slate-500 dark:bg-white/[0.04] dark:text-slate-400">
+                <thead class="bg-slate-50 text-slate-500">
                     <tr>
                         <th class="px-6 py-4">Invoice</th>
                         <th class="px-6 py-4">Patient</th>
@@ -83,38 +104,60 @@
 
                 <tbody>
                     {% for invoice in invoices %}
-                    <tr class="border-t border-slate-200 hover:bg-slate-50 dark:border-white/10 dark:hover:bg-white/[0.03]">
-                        <td class="px-6 py-5 font-medium">#{{ invoice.id }}</td>
-                        <td class="px-6 py-5 text-slate-600 dark:text-slate-300">{{ invoice.patient.full_name }}</td>
-                        <td class="px-6 py-5 text-slate-600 dark:text-slate-300">{{ invoice.amount }}</td>
+                    <tr class="border-t border-slate-200 hover:bg-slate-50 transition">
+                        <td class="px-6 py-5 font-medium text-slate-950">#{{ invoice.id }}</td>
+
+                        <td class="px-6 py-5 text-slate-600">
+                            {{ invoice.patient.full_name }}
+                        </td>
+
+                        <td class="px-6 py-5 text-slate-600">
+                            {{ invoice.amount }}
+                        </td>
 
                         <td class="px-6 py-5">
                             <span class="rounded-full px-3 py-1 text-xs font-semibold
                                 {% if invoice.status == 'Paid' %}
-                                    bg-cyan-100 text-cyan-700 dark:bg-cyan-400/10 dark:text-cyan-300
+                                    bg-cyan-50 border border-cyan-100 text-cyan-700
                                 {% else %}
-                                    bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-slate-300
+                                    bg-slate-50 border border-slate-200 text-slate-700
                                 {% endif %}
                             ">
                                 {{ invoice.status }}
                             </span>
                         </td>
 
-                        <td class="px-6 py-5 text-slate-500 dark:text-slate-400">
+                        <td class="px-6 py-5 text-slate-500">
                             {{ invoice.created_at|date:"M d, Y" }}
                         </td>
 
                         <td class="px-6 py-5">
-                            <a href="/admin/core/invoice/{{ invoice.id }}/change/"
-                               class="text-cyan-600 dark:text-cyan-300 font-semibold hover:underline">
-                                Edit
-                            </a>
+                            <div class="flex flex-wrap gap-2">
+                                <button type="button"
+                                    onclick="openEditModal(this)"
+                                    data-url="{% url 'invoice_edit' invoice.id %}"
+                                    data-patient="{{ invoice.patient.id }}"
+                                    data-amount="{{ invoice.amount }}"
+                                    data-status="{{ invoice.status }}"
+                                    class="rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                                    Edit
+                                </button>
+
+                                <form method="post" action="{% url 'invoice_delete' invoice.id %}"
+                                      onsubmit="return confirm('Delete this invoice?');">
+                                    {% csrf_token %}
+                                    <button type="submit"
+                                        class="rounded-full border border-rose-200 px-4 py-2 text-sm font-medium text-rose-600 hover:bg-rose-50">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
 
                     {% empty %}
                     <tr>
-                        <td colspan="6" class="px-6 py-12 text-center text-slate-400">
+                        <td colspan="6" class="px-6 py-16 text-center text-slate-400">
                             No invoices found.
                         </td>
                     </tr>
@@ -126,24 +169,104 @@
 
 </main>
 
+<div id="invoiceModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm">
+    <div class="w-full max-w-3xl rounded-[2rem] bg-white p-6 lg:p-8 shadow-2xl border border-slate-200">
+        <div class="mb-6 flex items-center justify-between">
+            <div>
+                <p class="text-cyan-600 font-medium">Invoice Form</p>
+                <h2 id="modalTitle" class="mt-2 text-3xl font-semibold tracking-tight">Create Invoice</h2>
+            </div>
+
+            <button type="button" onclick="closeModal()"
+                class="h-10 w-10 rounded-full border border-slate-200 text-xl hover:bg-slate-50">
+                &times;
+            </button>
+        </div>
+
+        <form id="invoiceForm" method="post" action="{% url 'invoices_list' %}" class="grid gap-4 lg:grid-cols-2">
+            {% csrf_token %}
+
+            <div class="lg:col-span-2">
+                <label class="mb-2 block text-sm font-medium text-slate-600">Patient</label>
+                <select id="id_patient" name="patient" class="input" required>
+                    <option value="">Select patient</option>
+                    {% for patient in patients %}
+                    <option value="{{ patient.id }}">{{ patient.full_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label class="mb-2 block text-sm font-medium text-slate-600">Amount</label>
+                <input id="id_amount" name="amount" type="number" step="0.01" class="input" required>
+            </div>
+
+            <div>
+                <label class="mb-2 block text-sm font-medium text-slate-600">Status</label>
+                <select id="id_status" name="status" class="input" required>
+                    <option value="Unpaid">Unpaid</option>
+                    <option value="Paid">Paid</option>
+                </select>
+            </div>
+
+            <div class="lg:col-span-2 flex flex-wrap gap-3 pt-2">
+                <button id="submitBtn" type="submit"
+                    class="rounded-full bg-slate-950 text-white px-7 py-3 font-medium hover:bg-slate-800">
+                    Save Invoice
+                </button>
+
+                <button type="button" onclick="closeModal()"
+                    class="rounded-full border border-slate-300 px-7 py-3 font-medium hover:bg-slate-50">
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer class="bg-slate-950 text-slate-400 py-8">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between gap-4">
+        <p>Shifa Hospital Billing</p>
+        <p>Modern hospital workflow</p>
+    </div>
+</footer>
+
 <script>
-const html = document.documentElement;
-const btn = document.getElementById("themeToggle");
+const modal = document.getElementById("invoiceModal");
+const form = document.getElementById("invoiceForm");
+const modalTitle = document.getElementById("modalTitle");
+const submitBtn = document.getElementById("submitBtn");
 
-function syncBtn(){
-    btn.textContent = html.classList.contains("dark") ? "Light Mode" : "Dark Mode";
+function openCreateModal() {
+    form.action = "{% url 'invoices_list' %}";
+    form.reset();
+
+    document.getElementById("id_status").value = "Unpaid";
+
+    modalTitle.textContent = "Create Invoice";
+    submitBtn.textContent = "Save Invoice";
+
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
 }
 
-if(localStorage.getItem("theme")==="dark"){
-    html.classList.add("dark");
+function openEditModal(button) {
+    form.action = button.dataset.url;
+
+    document.getElementById("id_patient").value = button.dataset.patient || "";
+    document.getElementById("id_amount").value = button.dataset.amount || "";
+    document.getElementById("id_status").value = button.dataset.status || "Unpaid";
+
+    modalTitle.textContent = "Edit Invoice";
+    submitBtn.textContent = "Update Invoice";
+
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
 }
 
-syncBtn();
-
-btn.onclick = () => {
-    html.classList.toggle("dark");
-    localStorage.setItem("theme", html.classList.contains("dark") ? "dark" : "light");
-    syncBtn();
+function closeModal() {
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
 }
 </script>
 

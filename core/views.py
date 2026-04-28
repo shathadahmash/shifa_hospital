@@ -126,12 +126,54 @@ def patient_edit(request, pk):
             return redirect("patients_list")
 
     return redirect("patients_list")
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Appointment, Patient, Doctor
+from .forms import AppointmentForm
 
 
 @login_required
 def appointments_list(request):
     appointments = Appointment.objects.select_related("patient", "doctor").all()
-    return render(request, "core/appointments_list.html", {"appointments": appointments})
+    patients = Patient.objects.all()
+    doctors = Doctor.objects.all()
+
+    if request.method == "POST":
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("appointments_list")
+    else:
+        form = AppointmentForm()
+
+    return render(request, "core/appointments_list.html", {
+        "appointments": appointments,
+        "patients": patients,
+        "doctors": doctors,
+        "form": form,
+    })
+
+
+@login_required
+def appointment_edit(request, pk):
+    appointment = get_object_or_404(Appointment, pk=pk)
+
+    if request.method == "POST":
+        form = AppointmentForm(request.POST, instance=appointment)
+        if form.is_valid():
+            form.save()
+
+    return redirect("appointments_list")
+
+
+@login_required
+def appointment_delete(request, pk):
+    appointment = get_object_or_404(Appointment, pk=pk)
+
+    if request.method == "POST":
+        appointment.delete()
+
+    return redirect("appointments_list")
 
 
 @login_required
@@ -140,7 +182,56 @@ def reports_list(request):
     return render(request, "core/reports_list.html", {"reports": reports})
 
 
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Invoice, Patient
+from .forms import InvoiceForm
+
+
 @login_required
 def invoices_list(request):
     invoices = Invoice.objects.select_related("patient").all()
-    return render(request, "core/invoices_list.html", {"invoices": invoices})
+    patients = Patient.objects.all()
+
+    if request.method == "POST":
+        form = InvoiceForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("invoices_list")
+    else:
+        form = InvoiceForm()
+
+    return render(request, "core/invoices_list.html", {
+        "invoices": invoices,
+        "patients": patients,
+        "form": form,
+    })
+
+
+@login_required
+def invoice_edit(request, pk):
+    invoice = get_object_or_404(Invoice, pk=pk)
+
+    if request.method == "POST":
+        form = InvoiceForm(request.POST, instance=invoice)
+        if form.is_valid():
+            form.save()
+
+    return redirect("invoices_list")
+
+
+@login_required
+def invoice_delete(request, pk):
+    invoice = get_object_or_404(Invoice, pk=pk)
+
+    if request.method == "POST":
+        invoice.delete()
+
+    return redirect("invoices_list")
+
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+
+def logout_user(request):
+    logout(request)
+    return redirect("home")
