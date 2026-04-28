@@ -2,18 +2,31 @@
 Django settings for shifa project.
 """
 
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-SECRET_KEY = 'django-insecure-8mh%f4-r)uogzk*xc-ix8^c4tap1adpk=65wvu*=p^52*uze#w'
-
-DEBUG = True
-
-ALLOWED_HOSTS = []
+# Load .env file
+load_dotenv(BASE_DIR / ".env")
 
 
+# SECURITY
+SECRET_KEY = os.getenv(
+    "SECRET_KEY",
+    "django-insecure-change-this-in-production"
+)
+
+DEBUG = os.getenv("DEBUG", "False") == "True"
+
+ALLOWED_HOSTS = os.getenv(
+    "ALLOWED_HOSTS",
+    "127.0.0.1,localhost"
+).split(",")
+
+
+# APPLICATIONS
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -26,8 +39,13 @@ INSTALLED_APPS = [
 ]
 
 
+# MIDDLEWARE
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+
+    # Static files for production
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -40,6 +58,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'shifa.urls'
 
 
+# TEMPLATES
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -61,6 +80,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'shifa.wsgi.application'
 
 
+# DATABASE
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -69,6 +89,7 @@ DATABASES = {
 }
 
 
+# PASSWORD VALIDATION
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -85,6 +106,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# INTERNATIONALIZATION
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -94,6 +116,7 @@ USE_I18N = True
 USE_TZ = True
 
 
+# STATIC FILES
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
@@ -102,9 +125,14 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+
+# DEFAULTS
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+# AUTH REDIRECTS
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "home"
