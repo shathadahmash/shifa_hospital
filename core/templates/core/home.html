@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shifa Hospital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-white text-slate-900">
+
+<header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <a href="/" class="text-2xl font-semibold tracking-tight">Shifa Hospital</a>
+
+        <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+            <a href="#services" class="hover:text-slate-950">Services</a>
+            <a href="#doctors" class="hover:text-slate-950">Doctors</a>
+            <a href="#about" class="hover:text-slate-950">About</a>
+            <a href="/login/" class="hover:text-slate-950">Dashboard</a>
+        </nav>
+
+        <a href="/login/" class="rounded-full bg-slate-950 text-white px-5 py-2.5 text-sm font-medium hover:bg-slate-800 transition">
+            Staff Login
+        </a>
+    </div>
+</header>
+
+<section class="relative pt-32 pb-20 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-cyan-50 via-white to-blue-100"></div>
+    <div class="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-cyan-200 blur-3xl opacity-60"></div>
+    <div class="absolute top-40 -left-32 h-96 w-96 rounded-full bg-blue-200 blur-3xl opacity-60"></div>
+
+    <div class="relative max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-14 items-center">
+        <div>
+            <p class="inline-flex rounded-full bg-white border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 shadow-sm">
+                Modern hospital care, managed beautifully
+            </p>
+
+            <h1 class="mt-7 text-5xl lg:text-7xl font-semibold tracking-tight leading-tight">
+                Better care starts with better systems.
+            </h1>
+
+            <p class="mt-6 text-lg text-slate-600 leading-8 max-w-xl">
+                A clean and modern hospital management platform for patients, doctors,
+                appointments, medical reports, rooms, billing and daily operations.
+            </p>
+
+            <div class="mt-9 flex flex-wrap gap-4">
+                <a href="/login/" class="rounded-full bg-slate-950 text-white px-7 py-4 font-medium hover:bg-slate-800">
+                    Staff Login
+                </a>
+                <a href="#services" class="rounded-full bg-white border border-slate-200 px-7 py-4 font-medium hover:bg-slate-50">
+                    View Services
+                </a>
+            </div>
+        </div>
+
+        <div class="relative">
+            <div class="rounded-[2rem] bg-white p-3 shadow-2xl border border-slate-200">
+                <img
+                    src="https://images.unsplash.com/photo-1586773860418-d37222d8fce3?q=80&w=1400&auto=format&fit=crop"
+                    alt="Hospital interior"
+                    loading="eager"
+                    class="h-[520px] w-full object-cover rounded-[1.5rem]"
+                >
+            </div>
+
+            <div class="absolute -bottom-6 -left-6 bg-white rounded-3xl shadow-xl border border-slate-200 p-5 w-64">
+                <p class="text-sm text-slate-500">Daily workflow</p>
+                <p class="text-3xl font-semibold mt-2">Organized</p>
+                <div class="mt-4 h-2 rounded-full bg-slate-100 overflow-hidden">
+                    <div class="h-full w-4/5 bg-cyan-500 rounded-full"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="services" class="py-24 bg-slate-950 text-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="max-w-2xl">
+            <p class="text-cyan-300 font-medium">Hospital Operations</p>
+            <h2 class="mt-3 text-4xl lg:text-5xl font-semibold tracking-tight">
+                Everything your system needs.
+            </h2>
+        </div>
+
+        <div class="mt-14 grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="rounded-3xl bg-white/10 border border-white/10 p-6">
+                <h3 class="text-xl font-semibold">Patients</h3>
+                <p class="mt-3 text-slate-300">Manage patient records, contacts, blood groups and emergency details.</p>
+            </div>
+
+            <div class="rounded-3xl bg-white/10 border border-white/10 p-6">
+                <h3 class="text-xl font-semibold">Appointments</h3>
+                <p class="mt-3 text-slate-300">Track visits, doctors, appointment status and patient notes.</p>
+            </div>
+
+            <div class="rounded-3xl bg-white/10 border border-white/10 p-6">
+                <h3 class="text-xl font-semibold">Reports</h3>
+                <p class="mt-3 text-slate-300">Store diagnosis, prescriptions, treatment plans and medical notes.</p>
+            </div>
+
+            <div class="rounded-3xl bg-white/10 border border-white/10 p-6">
+                <h3 class="text-xl font-semibold">Billing</h3>
+                <p class="mt-3 text-slate-300">Create invoices, payments and simple financial records.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="doctors" class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-14 items-center">
+        <div class="grid grid-cols-2 gap-4">
+            <img
+                src="https://images.unsplash.com/photo-1550831107-1553da8c8464?q=80&w=900&auto=format&fit=crop"
+                alt="Doctor"
+                loading="lazy"
+                class="rounded-3xl h-72 w-full object-cover"
+            >
+            <img
+                src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=900&auto=format&fit=crop"
+                alt="Medical team"
+                loading="lazy"
+                class="rounded-3xl h-72 w-full object-cover mt-10"
+            >
+        </div>
+
+        <div>
+            <p class="text-cyan-600 font-medium">Designed for staff</p>
+            <h2 class="mt-3 text-4xl lg:text-5xl font-semibold tracking-tight">
+                Clear tools for faster daily work.
+            </h2>
+            <p class="mt-6 text-slate-600 leading-8">
+                The dashboard keeps hospital data easy to read and fast to access.
+                Doctors, nurses and admins can manage records without confusion.
+            </p>
+
+            <div class="mt-8 grid sm:grid-cols-2 gap-4">
+                <div class="rounded-2xl border border-slate-200 p-5">
+                    <p class="text-3xl font-semibold">Fast</p>
+                    <p class="mt-2 text-slate-500">Simple pages, clean queries, no heavy frontend framework.</p>
+                </div>
+
+                <div class="rounded-2xl border border-slate-200 p-5">
+                    <p class="text-3xl font-semibold">Clean</p>
+                    <p class="mt-2 text-slate-500">Minimal interface with useful navigation and clear sections.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="about" class="py-24 bg-slate-100">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="rounded-[2rem] bg-white border border-slate-200 shadow-xl overflow-hidden grid lg:grid-cols-2">
+            <div class="p-10 lg:p-14">
+                <p class="text-cyan-600 font-medium">About the system</p>
+                <h2 class="mt-3 text-4xl font-semibold tracking-tight">
+                    Built for a professional hospital workflow.
+                </h2>
+                <p class="mt-6 text-slate-600 leading-8">
+                    This system starts simple but is structured to grow. You can add
+                    custom pages for patients, doctors, billing, reports and lab tests
+                    step by step without breaking the project.
+                </p>
+
+                <div class="mt-8 flex gap-4">
+                    <a href="/login/" class="rounded-full bg-slate-950 text-white px-6 py-3 font-medium">
+                        Staff Login
+                    </a>
+                    <a href="#services" class="rounded-full border border-slate-300 px-6 py-3 font-medium hover:bg-slate-50">
+                        Services
+                    </a>
+                </div>
+            </div>
+
+            <img
+                src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=1200&auto=format&fit=crop"
+                alt="Hospital room"
+                loading="lazy"
+                class="h-full min-h-[420px] w-full object-cover"
+            >
+        </div>
+    </div>
+</section>
+
+<footer class="bg-slate-950 text-slate-400 py-8">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between gap-4">
+        <p>Shifa Hospital Management System</p>
+        <p>Django and Tailwind CSS</p>
+    </div>
+</footer>
+
+</body>
+</html>

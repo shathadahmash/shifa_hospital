@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+</head>
+
+<body class="min-h-screen bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+
+<div class="min-h-screen flex">
+
+    <!-- Sidebar -->
+    <aside class="hidden lg:flex w-72 flex-col border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6">
+        <div class="mb-10">
+            <h1 class="text-2xl font-semibold tracking-tight">Shifa Hospital</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Management System</p>
+        </div>
+
+        <nav class="space-y-1">
+            <a class="block rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-4 py-3 font-medium" href="/">Dashboard</a>
+            <a class="block rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 px-4 py-3 text-slate-600 dark:text-slate-300" href="/admin/core/patient/">Patients</a>
+            <a class="block rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 px-4 py-3 text-slate-600 dark:text-slate-300" href="/admin/core/doctor/">Doctors</a>
+            <a class="block rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 px-4 py-3 text-slate-600 dark:text-slate-300" href="/admin/core/appointment/">Appointments</a>
+            <a class="block rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 px-4 py-3 text-slate-600 dark:text-slate-300" href="/admin/core/invoice/">Billing</a>
+            <a class="block rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 px-4 py-3 text-slate-600 dark:text-slate-300" href="/admin/">Admin Panel</a>
+        </nav>
+
+        <div class="mt-auto rounded-xl border border-slate-200 dark:border-slate-800 p-4">
+            <p class="text-sm text-slate-500 dark:text-slate-400">System Status</p>
+            <p class="mt-1 font-medium">Operational</p>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="flex-1 p-5 lg:p-10">
+
+        <!-- Header -->
+        <div class="mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+            <div>
+                <h2 class="text-3xl lg:text-5xl font-semibold tracking-tight">Dashboard</h2>
+                <p class="text-slate-500 dark:text-slate-400 mt-3">
+                    Overview of patients, doctors, appointments and billing.
+                </p>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="setTheme('light')" class="rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2 font-medium hover:bg-slate-200 dark:hover:bg-slate-800">
+                    Light
+                </button>
+                <button onclick="setTheme('dark')" class="rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2 font-medium hover:bg-slate-200 dark:hover:bg-slate-800">
+                    Dark
+                </button>
+                <a href="/admin/" class="rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-5 py-2 font-medium">
+                    Admin
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
+
+            <div class="rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
+                <p class="text-sm text-slate-500 dark:text-slate-400">Total Patients</p>
+                <h3 class="text-4xl font-semibold mt-4">{{ patients_count }}</h3>
+            </div>
+
+            <div class="rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
+                <p class="text-sm text-slate-500 dark:text-slate-400">Doctors</p>
+                <h3 class="text-4xl font-semibold mt-4">{{ doctors_count }}</h3>
+            </div>
+
+            <div class="rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
+                <p class="text-sm text-slate-500 dark:text-slate-400">Appointments</p>
+                <h3 class="text-4xl font-semibold mt-4">{{ appointments_count }}</h3>
+            </div>
+
+            <div class="rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
+                <p class="text-sm text-slate-500 dark:text-slate-400">Invoices</p>
+                <h3 class="text-4xl font-semibold mt-4">{{ invoices_count }}</h3>
+            </div>
+
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <a href="/admin/core/patient/add/" class="rounded-xl bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-950 px-5 py-4 text-center font-medium">
+                Add Patient
+            </a>
+            <a href="/admin/core/doctor/add/" class="rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-5 py-4 text-center font-medium">
+                Add Doctor
+            </a>
+            <a href="/admin/core/appointment/add/" class="rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-5 py-4 text-center font-medium">
+                New Appointment
+            </a>
+            <a href="/admin/core/invoice/add/" class="rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-5 py-4 text-center font-medium">
+                Create Invoice
+            </a>
+        </section>
+
+        <!-- Recent Appointments -->
+        <section class="rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden">
+            <div class="p-6 flex items-center justify-between border-b border-slate-200 dark:border-slate-800">
+                <div>
+                    <h3 class="text-xl font-semibold">Recent Appointments</h3>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Latest patient visits and booking status</p>
+                </div>
+                <a href="/admin/core/appointment/" class="text-sm font-medium text-slate-700 dark:text-slate-300 hover:underline">View all</a>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-sm">
+                        <tr>
+                            <th class="px-6 py-4">Patient</th>
+                            <th class="px-6 py-4">Doctor</th>
+                            <th class="px-6 py-4">Date</th>
+                            <th class="px-6 py-4">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appointment in recent_appointments %}
+                        <tr class="border-t border-slate-200 dark:border-slate-800">
+                            <td class="px-6 py-4 font-medium">{{ appointment.patient.full_name }}</td>
+                            <td class="px-6 py-4 text-slate-600 dark:text-slate-300">Dr. {{ appointment.doctor.full_name }}</td>
+                            <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ appointment.date }}</td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 rounded-full text-sm font-medium
+                                    {% if appointment.status == 'Completed' %}
+                                        bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300
+                                    {% elif appointment.status == 'Cancelled' %}
+                                        bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300
+                                    {% else %}
+                                        bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300
+                                    {% endif %}
+                                ">
+                                    {{ appointment.status }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="px-6 py-10 text-center text-slate-500 dark:text-slate-400">
+                                No appointments yet.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script>
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+        document.documentElement.classList.remove('dark');
+    } else {
+        document.documentElement.classList.add('dark');
+    }
+</script>
+
+</body>
+</html>

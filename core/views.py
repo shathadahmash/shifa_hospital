@@ -1,0 +1,113 @@
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required, user_passes_test
+from .models import Patient, Doctor, Appointment, MedicalReport, Invoice
+
+
+def home(request):
+    return render(request, "core/home.html")
+
+
+def is_admin(user):
+    return user.is_superuser or user.groups.filter(name="Admin").exists()
+
+
+def is_receptionist(user):
+    return user.groups.filter(name="Receptionist").exists()
+
+
+def is_doctor(user):
+    return user.groups.filter(name="Doctor").exists()
+
+
+def is_nurse(user):
+    return user.groups.filter(name="Nurse").exists()
+
+
+@login_required
+def dashboard_redirect(request):
+    user = request.user
+
+    if is_admin(user):
+        return redirect("admin_dashboard")
+
+    if is_receptionist(user):
+        return redirect("receptionist_dashboard")
+
+    if is_doctor(user):
+        return redirect("doctor_dashboard")
+
+    if is_nurse(user):
+        return redirect("nurse_dashboard")
+
+    return redirect("login")
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_dashboard(request):
+    context = {
+        "patients_count": Patient.objects.count(),
+        "doctors_count": Doctor.objects.count(),
+        "appointments_count": Appointment.objects.count(),
+        "invoices_count": Invoice.objects.count(),
+        "recent_appointments": Appointment.objects.select_related("patient", "doctor")[:5],
+    }
+    return render(request, "core/admin_dashboard.html", context)
+
+
+@login_required
+@user_passes_test(is_receptionist)
+def receptionist_dashboard(request):
+    context = {
+        "patients_count": Patient.objects.count(),
+        "appointments_count": Appointment.objects.count(),
+        "invoices_count": Invoice.objects.count(),
+        "recent_appointments": Appointment.objects.select_related("patient", "doctor")[:5],
+    }
+    return render(request, "core/receptionist_dashboard.html", context)
+
+
+@login_required
+@user_passes_test(is_doctor)
+def doctor_dashboard(request):
+    context = {
+        "appointments_count": Appointment.objects.count(),
+        "reports_count": MedicalReport.objects.count(),
+        "recent_appointments": Appointment.objects.select_related("patient", "doctor")[:5],
+    }
+    return render(request, "core/doctor_dashboard.html", context)
+
+
+@login_required
+@user_passes_test(is_nurse)
+def nurse_dashboard(request):
+    context = {
+        "patients_count": Patient.objects.count(),
+        "appointments_count": Appointment.objects.count(),
+        "recent_appointments": Appointment.objects.select_related("patient", "doctor")[:5],
+    }
+    return render(request, "core/nurse_dashboard.html", context)
+
+
+@login_required
+def patients_list(request):
+    patients = Patient.objects.all()
+    return render(request, "core/patients_list.html", {"patients": patients})
+
+
+@login_required
+def appointments_list(request):
+    appointments = Appointment.objects.select_related("patient", "doctor").all()
+    return render(request, "core/appointments_list.html", {"appointments": appointments})
+
+
+@login_required
+def reports_list(request):
+    reports = MedicalReport.objects.select_related("patient", "doctor").all()
+    return render(request, "core/reports_list.html", {"reports": reports})
+
+
+@login_required
+def invoices_list(request):
+    invoices = Invoice.objects.select_related("patient").all()
+    return render(request, "core/invoices_list.html", {"invoices": invoices})

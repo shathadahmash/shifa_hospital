@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>Appointments | Shifa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: "class" }</script>
+</head>
+
+<body class="min-h-screen bg-[#070b14] text-slate-100">
+<main class="p-6 lg:p-10">
+
+    <div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+            <p class="text-sm text-amber-300 font-medium">Scheduling</p>
+            <h1 class="mt-2 text-4xl lg:text-5xl font-semibold">Appointments</h1>
+            <p class="mt-3 text-slate-400">Review patient visits, doctors, dates and booking status.</p>
+        </div>
+
+        <div class="flex gap-3">
+            <a href="/dashboard/" class="rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-3 font-semibold">Dashboard</a>
+            <a href="/admin/core/appointment/add/" class="rounded-2xl bg-amber-400 text-slate-950 px-5 py-3 font-semibold">New Appointment</a>
+        </div>
+    </div>
+
+    <section class="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04]">
+        <div class="border-b border-white/10 p-6">
+            <h2 class="text-2xl font-semibold">All Appointments</h2>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-white/[0.04] text-slate-400">
+                    <tr>
+                        <th class="px-6 py-4">Patient</th>
+                        <th class="px-6 py-4">Doctor</th>
+                        <th class="px-6 py-4">Date</th>
+                        <th class="px-6 py-4">Time</th>
+                        <th class="px-6 py-4">Reason</th>
+                        <th class="px-6 py-4">Status</th>
+                        <th class="px-6 py-4">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for appointment in appointments %}
+                    <tr class="border-t border-white/10 hover:bg-white/[0.03]">
+                        <td class="px-6 py-5 font-medium">{{ appointment.patient.full_name }}</td>
+                        <td class="px-6 py-5 text-slate-300">{{ appointment.doctor.full_name }}</td>
+                        <td class="px-6 py-5 text-slate-300">{{ appointment.date }}</td>
+                        <td class="px-6 py-5 text-slate-300">{{ appointment.time }}</td>
+                        <td class="px-6 py-5 text-slate-400">{{ appointment.reason|default:"-" }}</td>
+                        <td class="px-6 py-5">
+                            <span class="rounded-full px-3 py-1 text-xs font-semibold
+                                {% if appointment.status == 'Completed' %}
+                                    bg-emerald-400/10 text-emerald-300
+                                {% elif appointment.status == 'Cancelled' %}
+                                    bg-rose-400/10 text-rose-300
+                                {% else %}
+                                    bg-amber-400/10 text-amber-300
+                                {% endif %}
+                            ">
+                                {{ appointment.status }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-5">
+                            <a href="/admin/core/appointment/{{ appointment.id }}/change/" class="text-amber-300 font-semibold hover:underline">
+                                Edit
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center text-slate-500">No appointments found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</main>
+</body>
+</html>

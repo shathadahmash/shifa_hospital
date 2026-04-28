@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>Medical Reports | Shifa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: "class" }</script>
+</head>
+
+<body class="min-h-screen bg-[#070b14] text-slate-100">
+<main class="p-6 lg:p-10">
+
+    <div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+            <p class="text-sm text-emerald-300 font-medium">Clinical Records</p>
+            <h1 class="mt-2 text-4xl lg:text-5xl font-semibold">Medical Reports</h1>
+            <p class="mt-3 text-slate-400">Review diagnosis, prescriptions, treatments and doctor notes.</p>
+        </div>
+
+        <div class="flex gap-3">
+            <a href="/dashboard/" class="rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-3 font-semibold">Dashboard</a>
+            <a href="/admin/core/medicalreport/add/" class="rounded-2xl bg-emerald-400 text-slate-950 px-5 py-3 font-semibold">New Report</a>
+        </div>
+    </div>
+
+    <section class="grid gap-5">
+        {% for report in reports %}
+        <article class="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 hover:bg-white/[0.06]">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                <div>
+                    <h2 class="text-2xl font-semibold">{{ report.patient.full_name }}</h2>
+                    <p class="mt-2 text-slate-400">
+                        Doctor: {{ report.doctor.full_name }} · {{ report.created_at|date:"M d, Y" }}
+                    </p>
+                </div>
+
+                <a href="/admin/core/medicalreport/{{ report.id }}/change/" class="text-emerald-300 font-semibold hover:underline">
+                    Edit Report
+                </a>
+            </div>
+
+            <div class="mt-6 grid gap-4 lg:grid-cols-3">
+                <div class="rounded-2xl bg-black/20 border border-white/10 p-5">
+                    <p class="text-sm text-slate-400">Diagnosis</p>
+                    <p class="mt-2 text-slate-200">{{ report.diagnosis }}</p>
+                </div>
+
+                <div class="rounded-2xl bg-black/20 border border-white/10 p-5">
+                    <p class="text-sm text-slate-400">Prescription</p>
+                    <p class="mt-2 text-slate-200">{{ report.prescription|default:"No prescription added." }}</p>
+                </div>
+
+                <div class="rounded-2xl bg-black/20 border border-white/10 p-5">
+                    <p class="text-sm text-slate-400">Treatment</p>
+                    <p class="mt-2 text-slate-200">{{ report.treatment|default:"No treatment added." }}</p>
+                </div>
+            </div>
+        </article>
+        {% empty %}
+        <div class="rounded-[2rem] border border-white/10 bg-white/[0.04] px-6 py-12 text-center text-slate-500">
+            No medical reports found.
+        </div>
+        {% endfor %}
+    </section>
+
+</main>
+</body>
+</html>
