@@ -1,6 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Patient, Doctor, Appointment, MedicalReport, Invoice
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required, user_passes_test
+from .models import Patient, Doctor, Appointment, MedicalReport, Invoice
+from .forms import PatientForm
 
 
 def home(request):
@@ -88,11 +92,40 @@ def nurse_dashboard(request):
     }
     return render(request, "core/nurse_dashboard.html", context)
 
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Patient
+from .forms import PatientForm
+
 
 @login_required
 def patients_list(request):
     patients = Patient.objects.all()
-    return render(request, "core/patients_list.html", {"patients": patients})
+    form = PatientForm()
+
+    if request.method == "POST":
+        form = PatientForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("patients_list")
+
+    return render(request, "core/patients_list.html", {
+        "patients": patients,
+        "form": form,
+    })
+
+
+@login_required
+def patient_edit(request, pk):
+    patient = get_object_or_404(Patient, pk=pk)
+
+    if request.method == "POST":
+        form = PatientForm(request.POST, instance=patient)
+        if form.is_valid():
+            form.save()
+            return redirect("patients_list")
+
+    return redirect("patients_list")
 
 
 @login_required
